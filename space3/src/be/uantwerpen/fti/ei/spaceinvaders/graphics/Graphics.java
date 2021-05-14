@@ -9,11 +9,20 @@ import java.io.IOException;
 public class Graphics {
     private int ScreenWidth;
     private int ScreenHeight;
+
+
+    private int widthIcon;
+    private int heighthIcon;
+
     private JFrame frame;
     private JPanel panel;
     private BufferedImage g2dimage;     // used for drawing
     private Graphics2D g2d;             // always draw in this one
     public BufferedImage backgroundImg;
+    public BufferedImage alienImg;
+
+
+
     private int size;
     public Graphics2D getG2d() {
         return g2d;
@@ -37,7 +46,10 @@ public class Graphics {
         try{
             backgroundImg = null;
             System.out.println("background should be loaded");
-            backgroundImg = ImageIO.read(new File("C:/Users/Wout/Documents/School/4 geavanceerde programmeertechnieken/space3/src/be/uantwerpen/fti/ei/spaceinvaders/resources/background.png"));
+            backgroundImg = ImageIO.read(new File("src/be/uantwerpen/fti/ei/spaceinvaders/resources/background.png"));
+            alienImg = ImageIO.read(new File("src/be/uantwerpen/fti/ei/spaceinvaders/resources/alien.png"));
+
+
         }
         catch(IOException e){
             System.out.println("Error file not loaded correctly");
@@ -70,7 +82,7 @@ public class Graphics {
         panel.repaint();
     }
 
-    private void doDrawing(java.awt.Graphics g) {
+    public void doDrawing(java.awt.Graphics g) {
         Graphics2D graph2d = (Graphics2D) g;
         Toolkit.getDefaultToolkit().sync();
         graph2d.drawImage(g2dimage, 0, 0, null);   // copy buffered image
@@ -78,9 +90,20 @@ public class Graphics {
         if (g2d != null)
             g2d.drawImage(backgroundImg,0, 0, null);
     }
+    public void doDrawing(java.awt.Graphics g,int x,int y)
+    {
+        Graphics2D graph2d = (Graphics2D) g;
+        Toolkit.getDefaultToolkit().sync();
+        graph2d.drawImage(g2dimage, x, y, null);   // copy buffered image
+        graph2d.dispose();
+        if (g2d != null)
+            g2d.drawImage(backgroundImg,0, 0, null);
+    }
 
 
     public void setGameDimensions(int GameWidth, int GameHeight) {
+        this.widthIcon = (GameWidth/64)-((GameWidth/64)/2);
+        this.heighthIcon = (GameHeight/64)-((GameHeight/64)/2);
         size = Math.min(ScreenWidth/GameWidth, ScreenHeight/GameHeight);
         System.out.println("size: "+size);
         frame.setLocation(50,50);
@@ -88,6 +111,7 @@ public class Graphics {
         loadImages();
         try {
             backgroundImg = resizeImage(backgroundImg, frame.getWidth(), frame.getHeight());
+
             //other images need to be adjusted as well
         } catch(Exception e) {
             System.out.println(e.getStackTrace());
@@ -97,5 +121,40 @@ public class Graphics {
         g2d.drawImage(backgroundImg,0, 0, null);
     }
 
+
+
+
+
+    public int getWidthIcon() {
+        return widthIcon;
+    }
+
+    public void setWidthIcon(int widthIcon) {
+        this.widthIcon = widthIcon;
+    }
+
+    public int getHeighthIcon() {
+        return heighthIcon;
+    }
+
+    public void setHeighthIcon(int heighthIcon) {
+        this.heighthIcon = heighthIcon;
+    }
+
+    public int getScreenWidth() {
+        return ScreenWidth;
+    }
+
+    public void setScreenWidth(int screenWidth) {
+        ScreenWidth = screenWidth;
+    }
+
+    public int getScreenHeight() {
+        return ScreenHeight;
+    }
+
+    public void setScreenHeight(int screenHeight) {
+        ScreenHeight = screenHeight;
+    }
 
 }

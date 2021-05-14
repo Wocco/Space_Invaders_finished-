@@ -6,10 +6,13 @@ import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.AbstractInput;
 import java.awt.*;
 
 public class J2dFactory extends AbstractFactory {
-    Graphics g;
-    Graphics2D gr;
-    public J2dFactory(){
-        //this.g=new Graphics();
+
+    private Graphics g;
+    public J2dFactory(Graphics g){
+        this.g=g;
+        g.setGameDimensions(896,896);
+        g.render();
+
     }
 
 
@@ -17,11 +20,12 @@ public class J2dFactory extends AbstractFactory {
 
     @Override
     public AbstractInput createInput() {
+
         return new J2DInput(g.getFrame());
     }
 
     public J2dEnemyShip newEnemyShip(){
-        return new J2dEnemyShip(gr);
+        return new J2dEnemyShip(this.g);
     };
 
 

@@ -20,7 +20,6 @@ public abstract class EnemyShip extends EnemyEntity {
     public void setDying(boolean dying) {
         this.dying = dying;
     }
-    abstract public int getWidthEnemyShip();
-    abstract public int getHeightEnemyship();
+
     abstract public void visualize() ;
 }

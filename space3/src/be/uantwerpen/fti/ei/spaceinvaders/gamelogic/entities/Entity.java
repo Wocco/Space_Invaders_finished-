@@ -52,9 +52,6 @@ public abstract class Entity {
     abstract String getEntity();
     abstract int getDirection();
     abstract public void visualize() ;
-    abstract public int getWidth();
-    abstract public int getHeight();
-    abstract public BufferedImage giveBufferedImage();
 
 
 }

@@ -1,12 +1,15 @@
 package be.uantwerpen.fti.ei.spaceinvaders.gamelogic;
 
+import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.EnemyShip;
 import be.uantwerpen.fti.ei.spaceinvaders.graphics.Graphics;
 
 import javax.swing.*;
 
 public class Game extends JPanel implements Runnable {
     AbstractFactory factory;
-    Graphics g;
+
+    private EnemyShip enemyShip;
+
     boolean running;
 
     private Thread thread;
@@ -14,13 +17,12 @@ public class Game extends JPanel implements Runnable {
 
     public Game(AbstractFactory f){
         this.factory=f;
-
+        f.createInput();
 
     }
     public void init(){
         running=true;
-        this.g=new Graphics();
-        g.setGameDimensions(10,10);
+        enemyShip=factory.newEnemyShip();
 
 
     }
@@ -53,7 +55,7 @@ public class Game extends JPanel implements Runnable {
     }
     @Override
     public void run() {
-        final double GAME_HERTZ=30;
+        final double GAME_HERTZ=1;
         final double TBU= 2_00_000_000 /GAME_HERTZ;//time before update
 
         final int MUBR=1; //most updates before render
@@ -86,7 +88,7 @@ public class Game extends JPanel implements Runnable {
             }
 
             //factory.graphicsRender();
-            g.render();
+
 
 
             //draw();
@@ -97,6 +99,8 @@ public class Game extends JPanel implements Runnable {
             if(thisSecond>lastSecondTime){
                 if(frameCount!=oldFrameCount){
                     System.out.println("NEW SECOND "+thisSecond+" "+frameCount);
+                    System.out.println("enemy drawn");
+                    enemyShip.visualize();
                     oldFrameCount=frameCount;
                 }
                 frameCount=0;
@@ -111,6 +115,7 @@ public class Game extends JPanel implements Runnable {
                     System.out.println("Error yielding thread");
                 }
                 now=System.nanoTime();
+
             }
         }
     }

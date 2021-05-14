@@ -2,57 +2,37 @@ package be.uantwerpen.fti.ei.spaceinvaders.graphics;
 
 import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.EnemyShip;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class J2dEnemyShip extends EnemyShip {
-    int width=64;
-    int height=64;
-    int widthEnemyShip=54;
-    int heightEnemyship=54;
-    Graphics2D g;
-    Sprite sprite = new Sprite("alien.png", widthEnemyShip, heightEnemyship);
-    J2dEnemyShip(Graphics2D g){
+    private Graphics g;
+    private BufferedImage enemyshipimg;
+    J2dEnemyShip(Graphics g){
         this.g=g;
+        try{
+            this.enemyshipimg = ImageIO.read(new File("src/be/uantwerpen/fti/ei/spaceinvaders/resources/player.png"));}
+        catch(IOException e)
+        {
+            System.out.println("Error file not loaded correctly");
+        }
     }
+
 
 
 
     @Override
     public void visualize() {
-        Sprite.drawArray(g, this.giveBufferedImage(), this.getWidthEnemyShip(), this.getHeightEnemyship(), this.getX() * this.getWidth(), this.getY() * this.getHeight());;
-    }
-    public int getWidth(){
-        return width;
-    }
-    public int getHeight(){
-        return height;
-    }
-    public int getWidthEnemyShip(){
-        return widthEnemyShip;
-    }
-    public int getHeightEnemyship(){
-        return heightEnemyship;
+        Graphics2D g2d=g.getG2d();
+        g2d.drawImage(g.alienImg,0,0,null);
+        g.render();
+
+
     }
 
 
 
-    public void setWidth(int newWidth){
-        this.width=newWidth;
-    }
-    public void setHeight(int newHeight){
-        this.height=newHeight;
-    }
-    public void setwidthEnemyShip(int widthEnemyShip){
-        this.widthEnemyShip=widthEnemyShip;
-    }
-    public void setheightEnemyship(int heightEnemyship){
-        this.heightEnemyship=heightEnemyship;
-    }
-
-
-    public BufferedImage giveBufferedImage(){
-        BufferedImage bufferedImage=null;
-        return bufferedImage=sprite.loadSprite("alien.png");
-    }
 }
