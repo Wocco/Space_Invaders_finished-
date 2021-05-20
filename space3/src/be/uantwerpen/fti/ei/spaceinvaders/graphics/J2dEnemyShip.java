@@ -14,11 +14,13 @@ public class J2dEnemyShip extends EnemyShip {
     J2dEnemyShip(Graphics g){
         this.g=g;
         try{
-            this.enemyshipimg = ImageIO.read(new File("src/be/uantwerpen/fti/ei/spaceinvaders/resources/player.png"));}
+            this.enemyshipimg = ImageIO.read(new File("src/be/uantwerpen/fti/ei/spaceinvaders/resources/alien.png"));}
+
         catch(IOException e)
         {
             System.out.println("Error file not loaded correctly");
         }
+        this.enemyshipimg=g.resizeImage(this.enemyshipimg,g.getWidthIcon(),g.getHeighthIcon());
     }
 
 
@@ -27,9 +29,9 @@ public class J2dEnemyShip extends EnemyShip {
     @Override
     public void visualize() {
         Graphics2D g2d=g.getG2d();
-        g2d.drawImage(g.alienImg,0,0,null);
-        g.render();
-
+        System.out.println("drawing at "+this.getX() +"and the icon width is"+g.getWidthIcon());
+        g2d.drawImage(enemyshipimg,this.getX()*g.getWidthIcon(),getY()* g.getWidthIcon(),null);
+        //g2d.drawImage(enemyshipimg,this.getX()*g.getSize(),getY()* g.getSize(),null);
 
     }
 

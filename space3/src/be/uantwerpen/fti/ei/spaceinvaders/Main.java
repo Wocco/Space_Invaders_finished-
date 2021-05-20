@@ -9,7 +9,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Graphics gr=new Graphics();
+        Graphics gr=new Graphics(800,800);
         AbstractFactory f=new J2dFactory(gr);
         Game g =new Game(f);
         //f.createInput();

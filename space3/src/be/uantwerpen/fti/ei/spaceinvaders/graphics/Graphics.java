@@ -47,7 +47,6 @@ public class Graphics {
             backgroundImg = null;
             System.out.println("background should be loaded");
             backgroundImg = ImageIO.read(new File("src/be/uantwerpen/fti/ei/spaceinvaders/resources/background.png"));
-            alienImg = ImageIO.read(new File("src/be/uantwerpen/fti/ei/spaceinvaders/resources/alien.png"));
 
 
         }
@@ -57,9 +56,9 @@ public class Graphics {
     }
 
 
-    public Graphics() {
-        ScreenWidth = 600;
-        ScreenHeight = 500;
+    public Graphics(int ScreenWidth,int ScreenHeight) {
+        this.ScreenWidth = ScreenWidth;
+        this.ScreenHeight = ScreenHeight;
         frame = new JFrame();
         panel = new JPanel(true) {
             @Override
@@ -70,7 +69,7 @@ public class Graphics {
         };
         frame.setFocusable(true);
         frame.add(panel);
-        frame.setTitle("Graphics example");
+        frame.setTitle("Space invaders");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setSize(ScreenWidth, ScreenHeight);
         frame.setResizable(true);
@@ -102,9 +101,10 @@ public class Graphics {
 
 
     public void setGameDimensions(int GameWidth, int GameHeight) {
-        this.widthIcon = (GameWidth/64)-((GameWidth/64)/2);
-        this.heighthIcon = (GameHeight/64)-((GameHeight/64)/2);
-        size = Math.min(ScreenWidth/GameWidth, ScreenHeight/GameHeight);
+        widthIcon = (GameWidth/16)-((GameWidth/64)/2);
+        heighthIcon = (GameHeight/16)-((GameHeight/64)/2);
+        //size = Math.min(ScreenWidth/GameWidth, ScreenHeight/GameHeight);
+        //size=GameWidth/16;
         System.out.println("size: "+size);
         frame.setLocation(50,50);
         frame.setSize(ScreenWidth, ScreenHeight);

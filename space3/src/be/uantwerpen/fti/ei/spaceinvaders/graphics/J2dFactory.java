@@ -8,11 +8,14 @@ import java.awt.*;
 public class J2dFactory extends AbstractFactory {
 
     private Graphics g;
-    public J2dFactory(Graphics g){
-        this.g=g;
-        g.setGameDimensions(896,896);
+    public J2dFactory(Graphics g) {
+        this.g = g;
+        g.setGameDimensions(800, 800);
         g.render();
 
+    }
+    public void update(){
+        g.render();
     }
 
 

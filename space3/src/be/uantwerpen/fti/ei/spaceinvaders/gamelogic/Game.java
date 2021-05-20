@@ -4,16 +4,19 @@ import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.EnemyShip;
 import be.uantwerpen.fti.ei.spaceinvaders.graphics.Graphics;
 
 import javax.swing.*;
+import java.util.ArrayList;
 
 public class Game extends JPanel implements Runnable {
     AbstractFactory factory;
 
     private EnemyShip enemyShip;
-
+    private int playingfield=16;
     boolean running;
 
     private Thread thread;
     //KeyHandler key;
+
+    private ArrayList<EnemyShip> wave=new ArrayList<EnemyShip>();
 
     public Game(AbstractFactory f){
         this.factory=f;
@@ -23,6 +26,13 @@ public class Game extends JPanel implements Runnable {
     public void init(){
         running=true;
         enemyShip=factory.newEnemyShip();
+        for(int i=0;i<=8;i++)
+        {
+            wave.add(factory.newEnemyShip());
+            wave.get(i).setX(i);
+            wave.get(i).setY(0);
+        }
+
 
 
     }
@@ -79,6 +89,12 @@ public class Game extends JPanel implements Runnable {
             while((now-lastUpdateTime)>TBU&&(updateCount<MUBR)){
                 //update();
 
+                for(int i=0;i< wave.size();i++){
+                    if(wave.get(wave.size()-1).getX()<playingfield)
+                        System.out.println("De wave playingeield is:"+playingfield+" De waarde van de huidige is:"+wave.get(i).getX());
+                    wave.get(i).setX(wave.get(i).getX()+1);
+                }
+
                 //input(key);
                 lastUpdateTime+=TBU;
                 updateCount++;
@@ -87,20 +103,23 @@ public class Game extends JPanel implements Runnable {
                 lastUpdateTime=now-TBU;
             }
 
-            //factory.graphicsRender();
 
 
 
             //draw();
             lastRenderTime=now;
             frameCount++;
+            
+            for(int i=0;i<wave.size();i++)
+            {
+                wave.get(i).visualize();
+            }
+            factory.update();
 
             int thisSecond=(int) (lastUpdateTime/1000000000);
             if(thisSecond>lastSecondTime){
                 if(frameCount!=oldFrameCount){
                     System.out.println("NEW SECOND "+thisSecond+" "+frameCount);
-                    System.out.println("enemy drawn");
-                    enemyShip.visualize();
                     oldFrameCount=frameCount;
                 }
                 frameCount=0;

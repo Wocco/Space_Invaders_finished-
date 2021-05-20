@@ -9,4 +9,5 @@ public abstract class AbstractFactory {
     public abstract AbstractInput createInput();
     public abstract EnemyShip newEnemyShip();
     //public abstract void graphicsRender();
+    public abstract void update();
 }
