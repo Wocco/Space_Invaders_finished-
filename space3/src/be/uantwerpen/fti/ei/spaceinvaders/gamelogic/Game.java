@@ -9,7 +9,6 @@ import java.util.ArrayList;
 public class Game extends JPanel implements Runnable {
     AbstractFactory factory;
 
-    private EnemyShip enemyShip;
     private int playingfield=16;
     boolean running;
     private int slowcount=0;
@@ -19,14 +18,14 @@ public class Game extends JPanel implements Runnable {
 
     private ArrayList<EnemyShip> wave=new ArrayList<EnemyShip>();
 
+    private AbstractInput input;
     public Game(AbstractFactory f){
         this.factory=f;
-        f.createInput();
 
     }
     public void init(){
         running=true;
-        enemyShip=factory.newEnemyShip();
+        input= factory.createInput();
         for(int i=0;i<=8;i++)
         {
             wave.add(factory.newEnemyShip());
@@ -42,24 +41,6 @@ public class Game extends JPanel implements Runnable {
 
     }
 
-
-    /*public void input(KeyHandler Key) {
-
-        if(Key.up.down){
-            System.out.println("W is being pressed");
-
-        }
-        if(Key.left.down){//this is A
-            System.out.println("A is being pressed");
-
-        }
-        if(Key.right.down){//this is d
-            System.out.println("d is being pressed down");
-        }
-        if(Key.shoot.down){//this is space bar
-            System.out.println("spacebar");
-        }
-    }*/
     public void addNotify(){
         super.addNotify();
         if(thread==null)
@@ -70,7 +51,6 @@ public class Game extends JPanel implements Runnable {
     }
     @Override
     public void run() {
-
         final double GAME_HERTZ=4;
         final double TBU= 2_00_000_000 /GAME_HERTZ;//time before update
 
@@ -92,9 +72,15 @@ public class Game extends JPanel implements Runnable {
             int updateCount=0;
 
 
+            if(input.inputAvailable())
+            {
+                System.out.println("their is input available");
+                System.out.println(input.getInput());
+            }
 
             while((now-lastUpdateTime)>TBU&&(updateCount<MUBR)){
                 //update();
+
 
                 if(slowcount==10)
                 {
@@ -126,7 +112,6 @@ public class Game extends JPanel implements Runnable {
                         //if(wave.get(i).getDx()==1)
                         wave.get(i).setX(wave.get(i).getX()+wave.get(i).getDx());
                     }
-
 
                     slowcount=0;
                 }
