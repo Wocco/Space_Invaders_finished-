@@ -29,9 +29,8 @@ public class J2dEnemyShip extends EnemyShip {
     @Override
     public void visualize() {
         Graphics2D g2d=g.getG2d();
-        System.out.println("drawing at "+this.getX() +"and the icon width is"+g.getWidthIcon());
         g2d.drawImage(enemyshipimg,this.getX()*g.getWidthIcon(),getY()* g.getWidthIcon(),null);
-        //g2d.drawImage(enemyshipimg,this.getX()*g.getSize(),getY()* g.getSize(),null);
+
 
     }
 

@@ -12,6 +12,7 @@ public class Game extends JPanel implements Runnable {
     private EnemyShip enemyShip;
     private int playingfield=16;
     boolean running;
+    private int slowcount=0;
 
     private Thread thread;
     //KeyHandler key;
@@ -29,9 +30,13 @@ public class Game extends JPanel implements Runnable {
         for(int i=0;i<=8;i++)
         {
             wave.add(factory.newEnemyShip());
-            wave.get(i).setX(i);
+            wave.get(i).setX(i+1);
             wave.get(i).setY(0);
+            wave.get(i).setDx(1);
+            wave.get(i).setDy(1);
+
         }
+
 
 
 
@@ -65,7 +70,8 @@ public class Game extends JPanel implements Runnable {
     }
     @Override
     public void run() {
-        final double GAME_HERTZ=1;
+
+        final double GAME_HERTZ=4;
         final double TBU= 2_00_000_000 /GAME_HERTZ;//time before update
 
         final int MUBR=1; //most updates before render
@@ -81,6 +87,7 @@ public class Game extends JPanel implements Runnable {
         int oldFrameCount=0;
 
         while(running){
+
             double now=System.nanoTime();
             int updateCount=0;
 
@@ -89,12 +96,44 @@ public class Game extends JPanel implements Runnable {
             while((now-lastUpdateTime)>TBU&&(updateCount<MUBR)){
                 //update();
 
-                for(int i=0;i< wave.size();i++){
-                    if(wave.get(wave.size()-1).getX()<playingfield)
-                        System.out.println("De wave playingeield is:"+playingfield+" De waarde van de huidige is:"+wave.get(i).getX());
-                    wave.get(i).setX(wave.get(i).getX()+1);
-                }
+                if(slowcount==10)
+                {
 
+
+
+                    if(wave.get(wave.size()-1).getX()>playingfield)//if the outer right wall is hit
+                        {
+                            System.out.println("/if the outer right wall is hit");
+                            for (int i = 0;i<wave.size();i++)
+                            {
+                                wave.get(i).setDx(-1);
+                                wave.get(i).setY(wave.get(i).getY()+1);
+                            }
+                        }
+                    if(wave.get(0).getX()==0)
+                    {
+                        System.out.println("/if the outer left wall is hit");
+                        for (int i = 0;i<wave.size();i++)
+                        {
+                            wave.get(i).setDx(1);
+                            wave.get(i).setY(wave.get(i).getY()+1);
+
+                        }
+                    }
+
+                    for(int i=0;i< wave.size();i++)
+                    {
+                        //if(wave.get(i).getDx()==1)
+                        wave.get(i).setX(wave.get(i).getX()+wave.get(i).getDx());
+                    }
+
+
+                    slowcount=0;
+                }
+                else
+                {
+                    slowcount=slowcount+1;
+                }
                 //input(key);
                 lastUpdateTime+=TBU;
                 updateCount++;
@@ -109,7 +148,7 @@ public class Game extends JPanel implements Runnable {
             //draw();
             lastRenderTime=now;
             frameCount++;
-            
+
             for(int i=0;i<wave.size();i++)
             {
                 wave.get(i).visualize();

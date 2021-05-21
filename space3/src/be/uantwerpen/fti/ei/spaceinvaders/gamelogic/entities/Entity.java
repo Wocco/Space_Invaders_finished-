@@ -48,7 +48,7 @@ public abstract class Entity {
     }
 
     abstract String getEntity();
-    abstract int getDirection();
+
     abstract public void visualize() ;
 
 
