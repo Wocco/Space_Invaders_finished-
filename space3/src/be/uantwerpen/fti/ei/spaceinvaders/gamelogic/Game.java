@@ -1,6 +1,7 @@
 package be.uantwerpen.fti.ei.spaceinvaders.gamelogic;
 
 import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.EnemyShip;
+import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.Playership;
 import be.uantwerpen.fti.ei.spaceinvaders.graphics.Graphics;
 
 import javax.swing.*;
@@ -16,8 +17,12 @@ public class Game extends JPanel implements Runnable {
     private Thread thread;
     //KeyHandler key;
 
-    private ArrayList<EnemyShip> wave=new ArrayList<EnemyShip>();
 
+    //Entitys
+    private ArrayList<EnemyShip> wave=new ArrayList<EnemyShip>();
+    private Playership playership;
+
+    //input
     private AbstractInput input;
     public Game(AbstractFactory f){
         this.factory=f;
@@ -33,12 +38,10 @@ public class Game extends JPanel implements Runnable {
             wave.get(i).setY(0);
             wave.get(i).setDx(1);
             wave.get(i).setDy(1);
-
         }
-
-
-
-
+        playership= factory.newPlayership();
+        playership.setX(8);
+        playership.setY(16);
     }
 
     public void addNotify(){
@@ -74,8 +77,19 @@ public class Game extends JPanel implements Runnable {
 
             if(input.inputAvailable())
             {
+
                 System.out.println("their is input available");
-                System.out.println(input.getInput());
+                //System.out.println(input.getInput());
+                switch (input.getInput())
+                {
+                    case LEFT:System.out.println("leftee");
+                    break;
+                    case SPACE:System.out.println("spacie");
+                    break;
+                }
+
+
+
             }
 
             while((now-lastUpdateTime)>TBU&&(updateCount<MUBR)){
@@ -119,6 +133,9 @@ public class Game extends JPanel implements Runnable {
                 {
                     slowcount=slowcount+1;
                 }
+
+
+
                 //input(key);
                 lastUpdateTime+=TBU;
                 updateCount++;
@@ -138,6 +155,7 @@ public class Game extends JPanel implements Runnable {
             {
                 wave.get(i).visualize();
             }
+            playership.visualize();
             factory.update();
 
             int thisSecond=(int) (lastUpdateTime/1000000000);
