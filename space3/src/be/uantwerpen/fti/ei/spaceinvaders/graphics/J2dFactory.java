@@ -2,6 +2,7 @@ package be.uantwerpen.fti.ei.spaceinvaders.graphics;
 
 import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.AbstractFactory;
 import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.AbstractInput;
+import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.Playership;
 
 import java.awt.*;
 
@@ -26,10 +27,11 @@ public class J2dFactory extends AbstractFactory {
 
         return new J2DInput(g.getFrame());
     }
-
+    @Override
     public J2dEnemyShip newEnemyShip(){
         return new J2dEnemyShip(this.g);
     };
 
-
+    @Override
+    public Playership newPlayership() { return new J2dPlayership(this.g); }
 }

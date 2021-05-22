@@ -30,12 +30,16 @@ public class J2DInput extends AbstractInput {
             switch (keycode){
                 case KeyEvent.VK_LEFT:
                     keyInputs.add(AbstractInput.Inputs.LEFT);
+                    break;
                 case KeyEvent.VK_RIGHT:
                     keyInputs.add(AbstractInput.Inputs.RIGHT);
+                    break;
                 case KeyEvent.VK_SPACE:
                     keyInputs.add(AbstractInput.Inputs.SPACE);
+                    break;
                 case KeyEvent.VK_ESCAPE:
                     keyInputs.add(AbstractInput.Inputs.ESCAPE);
+                    break;
 
             }
         }

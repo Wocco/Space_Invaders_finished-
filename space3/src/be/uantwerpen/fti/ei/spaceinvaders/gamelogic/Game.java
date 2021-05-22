@@ -1,6 +1,7 @@
 package be.uantwerpen.fti.ei.spaceinvaders.gamelogic;
 
 import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.EnemyShip;
+import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.Playership;
 import be.uantwerpen.fti.ei.spaceinvaders.graphics.Graphics;
 
 import javax.swing.*;
@@ -9,7 +10,6 @@ import java.util.ArrayList;
 public class Game extends JPanel implements Runnable {
     AbstractFactory factory;
 
-    private EnemyShip enemyShip;
     private int playingfield=16;
     boolean running;
     private int slowcount=0;
@@ -17,16 +17,20 @@ public class Game extends JPanel implements Runnable {
     private Thread thread;
     //KeyHandler key;
 
-    private ArrayList<EnemyShip> wave=new ArrayList<EnemyShip>();
 
+    //Entitys
+    private ArrayList<EnemyShip> wave=new ArrayList<EnemyShip>();
+    private Playership playership;
+
+    //input
+    private AbstractInput input;
     public Game(AbstractFactory f){
         this.factory=f;
-        f.createInput();
 
     }
     public void init(){
         running=true;
-        enemyShip=factory.newEnemyShip();
+        input= factory.createInput();
         for(int i=0;i<=8;i++)
         {
             wave.add(factory.newEnemyShip());
@@ -34,32 +38,12 @@ public class Game extends JPanel implements Runnable {
             wave.get(i).setY(0);
             wave.get(i).setDx(1);
             wave.get(i).setDy(1);
-
         }
-
-
-
-
+        playership= factory.newPlayership();
+        playership.setX(8);
+        playership.setY(16);
     }
 
-
-    /*public void input(KeyHandler Key) {
-
-        if(Key.up.down){
-            System.out.println("W is being pressed");
-
-        }
-        if(Key.left.down){//this is A
-            System.out.println("A is being pressed");
-
-        }
-        if(Key.right.down){//this is d
-            System.out.println("d is being pressed down");
-        }
-        if(Key.shoot.down){//this is space bar
-            System.out.println("spacebar");
-        }
-    }*/
     public void addNotify(){
         super.addNotify();
         if(thread==null)
@@ -70,7 +54,6 @@ public class Game extends JPanel implements Runnable {
     }
     @Override
     public void run() {
-
         final double GAME_HERTZ=4;
         final double TBU= 2_00_000_000 /GAME_HERTZ;//time before update
 
@@ -92,15 +75,44 @@ public class Game extends JPanel implements Runnable {
             int updateCount=0;
 
 
+            if(input.inputAvailable())
+            {
+                switch (input.getInput())
+                {
+                    case LEFT:
+                        System.out.println("The left key is pressed"+playership.getX());
+                        if(playership.getX()>0)
+                        {
+                            playership.setX(playership.getX()-1);
+                        }
+                        //else do nothing
+                    break;
+                    case SPACE:
+                        //shoot
+                        System.out.println("The spacebar is pressed");
+                    break;
+                    case RIGHT:
+                        if(playership.getX()<=playingfield)
+                        {
+                            playership.setX(playership.getX()+1);
+                        }
+                        System.out.println("The right key is pressed");
+                        break;
+                    case ESCAPE:
+                        //pause the game
+                        System.out.println("The escape button is pressed");
+                        break;
+                }
+
+
+
+            }
 
             while((now-lastUpdateTime)>TBU&&(updateCount<MUBR)){
                 //update();
 
                 if(slowcount==10)
                 {
-
-
-
                     if(wave.get(wave.size()-1).getX()>playingfield)//if the outer right wall is hit
                         {
                             System.out.println("/if the outer right wall is hit");
@@ -127,13 +139,15 @@ public class Game extends JPanel implements Runnable {
                         wave.get(i).setX(wave.get(i).getX()+wave.get(i).getDx());
                     }
 
-
                     slowcount=0;
                 }
                 else
                 {
                     slowcount=slowcount+1;
                 }
+
+
+
                 //input(key);
                 lastUpdateTime+=TBU;
                 updateCount++;
@@ -153,6 +167,7 @@ public class Game extends JPanel implements Runnable {
             {
                 wave.get(i).visualize();
             }
+            playership.visualize();
             factory.update();
 
             int thisSecond=(int) (lastUpdateTime/1000000000);
