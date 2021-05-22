@@ -77,15 +77,31 @@ public class Game extends JPanel implements Runnable {
 
             if(input.inputAvailable())
             {
-
-                System.out.println("their is input available");
-                //System.out.println(input.getInput());
                 switch (input.getInput())
                 {
-                    case LEFT:System.out.println("leftee");
+                    case LEFT:
+                        System.out.println("The left key is pressed"+playership.getX());
+                        if(playership.getX()>0)
+                        {
+                            playership.setX(playership.getX()-1);
+                        }
+                        //else do nothing
                     break;
-                    case SPACE:System.out.println("spacie");
+                    case SPACE:
+                        //shoot
+                        System.out.println("The spacebar is pressed");
                     break;
+                    case RIGHT:
+                        if(playership.getX()<=playingfield)
+                        {
+                            playership.setX(playership.getX()+1);
+                        }
+                        System.out.println("The right key is pressed");
+                        break;
+                    case ESCAPE:
+                        //pause the game
+                        System.out.println("The escape button is pressed");
+                        break;
                 }
 
 
@@ -95,12 +111,8 @@ public class Game extends JPanel implements Runnable {
             while((now-lastUpdateTime)>TBU&&(updateCount<MUBR)){
                 //update();
 
-
                 if(slowcount==10)
                 {
-
-
-
                     if(wave.get(wave.size()-1).getX()>playingfield)//if the outer right wall is hit
                         {
                             System.out.println("/if the outer right wall is hit");
