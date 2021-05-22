@@ -3,6 +3,7 @@ package be.uantwerpen.fti.ei.spaceinvaders.graphics;
 import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.AbstractFactory;
 import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.AbstractInput;
 import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.EnemyBullet;
+import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.PlayerBullet;
 import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.Playership;
 
 import java.awt.*;
@@ -21,7 +22,10 @@ public class J2dFactory extends AbstractFactory {
     }
 
 
-
+    @Override
+    public PlayerBullet newPlayerBullet() {
+        return new J2dPlayerBullet(this.g);
+    }
 
     @Override
     public AbstractInput createInput() {

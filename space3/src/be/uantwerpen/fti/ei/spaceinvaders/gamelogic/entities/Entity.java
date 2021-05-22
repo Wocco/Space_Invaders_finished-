@@ -7,7 +7,15 @@ public abstract class Entity {
     int y=0;     //place y from 0 to 9
     int dx = 0;  //movement x
     int dy=0;    //movement y
+    public boolean visible;
 
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
 
 
 //getters

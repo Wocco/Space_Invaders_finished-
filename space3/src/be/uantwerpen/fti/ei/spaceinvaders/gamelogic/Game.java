@@ -12,6 +12,9 @@ public class Game extends JPanel implements Runnable {
     AbstractFactory factory;
 
     private int playingfield=16;
+    private int rows=3;
+    private int columns=8;
+    private int moveForward;
     boolean running;
     private int slowcount=0;
 
@@ -33,14 +36,17 @@ public class Game extends JPanel implements Runnable {
     public void init(){
         running=true;
         input= factory.createInput();
-        for(int i=0;i<=8;i++)
+        for(int j=0; j<rows;j++)
         {
-            wave.add(factory.newEnemyShip());
-            wave.get(i).setX(i+1);
-            wave.get(i).setY(0);
-            wave.get(i).setDx(1);
-            wave.get(i).setDy(1);
+            for(int i=0;i<columns;i++)
+            {
+                wave.add(factory.newEnemyShip());
+                wave.get(wave.size()-1).setDx(1);
+                wave.get(wave.size()-1).setX(1+i);
+                wave.get(wave.size()-1).setY(j);
+            }
         }
+
         playership= factory.newPlayership();
         playership.setX(8);
         playership.setY(16);
@@ -118,33 +124,58 @@ public class Game extends JPanel implements Runnable {
 
                 if(slowcount==10)
                 {
-                    if(wave.get(wave.size()-1).getX()>playingfield)//if the outer right wall is hit
+
+
+                    if((wave.get(wave.size()-1).getX()>playingfield)&&moveForward!=-2)//if the outer right wall is hit
+                    {
+                        System.out.println("if the outer right wall is hit");
+                        for(int i = 0; i < wave.size();i++)
                         {
-                            System.out.println("/if the outer right wall is hit");
-                            for (int i = 0;i<wave.size();i++)
-                            {
-                                wave.get(i).setDx(-1);
-                                wave.get(i).setY(wave.get(i).getY()+1);
-                            }
+                            wave.get(i).setDx(0);
+                            moveForward=-1;
+                            wave.get(i).setY(wave.get(i).getY()+1);
                         }
-                    if(wave.get(0).getX()==0)
+                    }
+
+                    if((wave.get(0).getX()==0)&&moveForward!=2)
                     {
                         System.out.println("/if the outer left wall is hit");
                         for (int i = 0;i<wave.size();i++)
                         {
-                            wave.get(i).setDx(1);
+                            wave.get(i).setDx(0);
                             wave.get(i).setY(wave.get(i).getY()+1);
+                            moveForward=1;
 
                         }
                     }
-
                     for(int i=0;i< wave.size();i++)
                     {
                         //if(wave.get(i).getDx()==1)
                         wave.get(i).setX(wave.get(i).getX()+wave.get(i).getDx());
+                        if (moveForward==-1)
+                        {
+
+                            wave.get(i).setDx(-1);
+
+                        }
+                        if (moveForward==1)
+                        {
+                            wave.get(i).setDx(1);
+
+                        }
+                    }
+                    if(moveForward==-1)
+                    {
+                        moveForward=-2;
+                    }
+                    if (moveForward==1)
+                    {
+                        moveForward=2;
                     }
 
                     slowcount=0;
+
+
                 }
                 else
                 {
@@ -168,10 +199,16 @@ public class Game extends JPanel implements Runnable {
             lastRenderTime=now;
             frameCount++;
 
+
             for(int i=0;i<wave.size();i++)
             {
-                wave.get(i).visualize();
+                if (wave.get(i).isVisible()==true)
+                {
+                    wave.get(i).visualize();
+                }
+
             }
+
             playership.visualize();
             enemyBullet.visualize();
 
