@@ -30,8 +30,6 @@ public class J2dEnemyShip extends EnemyShip {
     public void visualize() {
         Graphics2D g2d=g.getG2d();
         g2d.drawImage(enemyshipimg,this.getX()*g.getWidthIcon(),getY()* g.getWidthIcon(),null);
-
-
     }
 
 

@@ -1,5 +1,6 @@
 package be.uantwerpen.fti.ei.spaceinvaders.gamelogic;
 
+import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.EnemyBullet;
 import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.EnemyShip;
 import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.Playership;
 import be.uantwerpen.fti.ei.spaceinvaders.graphics.Graphics;
@@ -21,6 +22,7 @@ public class Game extends JPanel implements Runnable {
     //Entitys
     private ArrayList<EnemyShip> wave=new ArrayList<EnemyShip>();
     private Playership playership;
+    private EnemyBullet enemyBullet;
 
     //input
     private AbstractInput input;
@@ -42,6 +44,10 @@ public class Game extends JPanel implements Runnable {
         playership= factory.newPlayership();
         playership.setX(8);
         playership.setY(16);
+
+        enemyBullet=factory.newEnemyBullet();
+        enemyBullet.setX(10);
+        enemyBullet.setY(10);
     }
 
     public void addNotify(){
@@ -80,7 +86,6 @@ public class Game extends JPanel implements Runnable {
                 switch (input.getInput())
                 {
                     case LEFT:
-                        System.out.println("The left key is pressed"+playership.getX());
                         if(playership.getX()>0)
                         {
                             playership.setX(playership.getX()-1);
@@ -89,7 +94,7 @@ public class Game extends JPanel implements Runnable {
                     break;
                     case SPACE:
                         //shoot
-                        System.out.println("The spacebar is pressed");
+
                     break;
                     case RIGHT:
                         if(playership.getX()<=playingfield)
@@ -168,6 +173,8 @@ public class Game extends JPanel implements Runnable {
                 wave.get(i).visualize();
             }
             playership.visualize();
+            enemyBullet.visualize();
+
             factory.update();
 
             int thisSecond=(int) (lastUpdateTime/1000000000);
