@@ -2,6 +2,7 @@ package be.uantwerpen.fti.ei.spaceinvaders.gamelogic;
 
 import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.EnemyBullet;
 import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.EnemyShip;
+import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.PlayerBullet;
 import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.Playership;
 import be.uantwerpen.fti.ei.spaceinvaders.graphics.Graphics;
 
@@ -23,9 +24,10 @@ public class Game extends JPanel implements Runnable {
 
 
     //Entitys
-    private ArrayList<EnemyShip> wave=new ArrayList<EnemyShip>();
+    private ArrayList<EnemyShip> wave = new ArrayList<EnemyShip>();
     private Playership playership;
-    private EnemyBullet enemyBullet;
+    private ArrayList <EnemyBullet> EnemyBullets = new ArrayList<EnemyBullet>();
+    private ArrayList <PlayerBullet> playerBullets = new ArrayList<PlayerBullet>();
 
     //input
     private AbstractInput input;
@@ -44,6 +46,7 @@ public class Game extends JPanel implements Runnable {
                 wave.get(wave.size()-1).setDx(1);
                 wave.get(wave.size()-1).setX(1+i);
                 wave.get(wave.size()-1).setY(j);
+                wave.get(wave.size()-1).setVisible(true);
             }
         }
 
@@ -51,9 +54,7 @@ public class Game extends JPanel implements Runnable {
         playership.setX(8);
         playership.setY(16);
 
-        enemyBullet=factory.newEnemyBullet();
-        enemyBullet.setX(10);
-        enemyBullet.setY(10);
+
     }
 
     public void addNotify(){
@@ -74,7 +75,7 @@ public class Game extends JPanel implements Runnable {
         double lastUpdateTime=System.nanoTime();
         double lastRenderTime;
 
-        final double TARGET_FPS=30;
+        final double TARGET_FPS=10;
         final double TTBR=1000000000/TARGET_FPS;//total time before render
 
         int frameCount=0;
@@ -99,7 +100,11 @@ public class Game extends JPanel implements Runnable {
                         //else do nothing
                     break;
                     case SPACE:
-                        //shoot
+                        playerBullets.add(factory.newPlayerBullet());
+                        playerBullets.get(playerBullets.size()-1).setX(playership.getX());
+                        playerBullets.get(playerBullets.size()-1).setY(playership.getY()-1);
+                        playerBullets.get(playerBullets.size()-1).setDx(0);
+                        playerBullets.get(playerBullets.size()-1).setDy(-1);
 
                     break;
                     case RIGHT:
@@ -121,11 +126,8 @@ public class Game extends JPanel implements Runnable {
 
             while((now-lastUpdateTime)>TBU&&(updateCount<MUBR)){
                 //update();
-
                 if(slowcount==10)
                 {
-
-
                     if((wave.get(wave.size()-1).getX()>playingfield)&&moveForward!=-2)//if the outer right wall is hit
                     {
                         System.out.println("if the outer right wall is hit");
@@ -172,15 +174,41 @@ public class Game extends JPanel implements Runnable {
                     {
                         moveForward=2;
                     }
-
                     slowcount=0;
-
-
                 }
                 else
                 {
                     slowcount=slowcount+1;
                 }
+
+                int index=0;
+                while(index<playerBullets.size())
+                {
+                    if(playerBullets.get(index).getY()<0)
+                    {
+                        playerBullets.remove(index);
+                    }
+                    else
+                    {
+                        for(int i=0;i< wave.size();i++)
+                        {
+                            if (playerBullets.get(index).getX()==wave.get(i).getX() && playerBullets.get(index).getY()==wave.get(i).getY() && wave.get(i).isVisible()==true)
+                            {
+                                wave.get(i).setVisible(false);
+                                playerBullets.remove(index);
+                                break;
+                            }
+                        }
+                    }
+                    index++;
+                }
+
+
+                for(int i=0;i<playerBullets.size();i++)
+                {
+                    playerBullets.get(i).setY(playerBullets.get(i).getY()-1);
+                }
+
 
 
 
@@ -192,25 +220,27 @@ public class Game extends JPanel implements Runnable {
                 lastUpdateTime=now-TBU;
             }
 
-
-
-
-            //draw();
             lastRenderTime=now;
             frameCount++;
 
-
+            //visualize the enemy players
             for(int i=0;i<wave.size();i++)
             {
                 if (wave.get(i).isVisible()==true)
                 {
                     wave.get(i).visualize();
                 }
-
+            }
+            if (playerBullets.size()!=0)
+            {
+                for(int i=0;i<playerBullets.size();i++)
+                {
+                    playerBullets.get(i).visualize();
+                }
             }
 
             playership.visualize();
-            enemyBullet.visualize();
+
 
             factory.update();
 

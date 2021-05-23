@@ -20,9 +20,8 @@ public class J2dEnemyBullet extends EnemyBullet {
         {
             System.out.println("Error file not loaded correctly");
         }
-        this.enemyBullet=g.resizeImage(this.enemyBullet,g.getWidthIcon()/2,g.getHeighthIcon());
+        this.enemyBullet=g.resizeImage(this.enemyBullet,g.getWidthIcon(),g.getHeighthIcon());
     }
-
 
 
     @Override
