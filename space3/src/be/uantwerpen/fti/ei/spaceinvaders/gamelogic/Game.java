@@ -284,7 +284,7 @@ public class Game extends JPanel implements Runnable {
                     enemyBullets.get(i).visualize();
                 }
             }
-
+            factory.setText("health: "+playership.getHealth() );
             playership.visualize();
 
 

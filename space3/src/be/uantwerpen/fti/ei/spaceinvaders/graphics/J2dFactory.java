@@ -27,6 +27,8 @@ public class J2dFactory extends AbstractFactory {
         return new J2dPlayerBullet(this.g);
     }
 
+    public void setText(String text){g.setStatusbar(text);}
+
     @Override
     public AbstractInput createInput() {
 
