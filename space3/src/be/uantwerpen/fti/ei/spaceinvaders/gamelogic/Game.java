@@ -8,6 +8,7 @@ import be.uantwerpen.fti.ei.spaceinvaders.graphics.Graphics;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Game extends JPanel implements Runnable {
     AbstractFactory factory;
@@ -19,6 +20,8 @@ public class Game extends JPanel implements Runnable {
     boolean running;
     private int slowcount=0;
 
+    Random rand = new Random();
+
     private Thread thread;
     //KeyHandler key;
 
@@ -26,7 +29,7 @@ public class Game extends JPanel implements Runnable {
     //Entitys
     private ArrayList<EnemyShip> wave = new ArrayList<EnemyShip>();
     private Playership playership;
-    private ArrayList <EnemyBullet> EnemyBullets = new ArrayList<EnemyBullet>();
+    private ArrayList <EnemyBullet> enemyBullets = new ArrayList<EnemyBullet>();
     private ArrayList <PlayerBullet> playerBullets = new ArrayList<PlayerBullet>();
 
     //input
@@ -120,14 +123,30 @@ public class Game extends JPanel implements Runnable {
                         break;
                 }
 
-
-
             }
 
             while((now-lastUpdateTime)>TBU&&(updateCount<MUBR)){
                 //update();
                 if(slowcount==10)
                 {
+                    //enemys shooting back
+                    int rand_int1 =rand.nextInt(wave.size());
+                    System.out.println("the random int: " + rand_int1);
+                    if(wave.get(rand_int1).isVisible()&& rand_int1%2==0)
+                    {
+                        enemyBullets.add(factory.newEnemyBullet());
+                        enemyBullets.get(enemyBullets.size()-1).setY(wave.get(rand_int1).getY()+1);
+                        enemyBullets.get(enemyBullets.size()-1).setX(wave.get(rand_int1).getX());
+                    }
+
+
+
+                    for(int i=0;i<enemyBullets.size();i++)
+                    {
+                        enemyBullets.get(i).setY(enemyBullets.get(i).getY()+1);
+                    }
+
+
                     if((wave.get(wave.size()-1).getX()>playingfield)&&moveForward!=-2)//if the outer right wall is hit
                     {
                         System.out.println("if the outer right wall is hit");
@@ -179,6 +198,26 @@ public class Game extends JPanel implements Runnable {
                 else
                 {
                     slowcount=slowcount+1;
+                }
+
+                int count=0;
+                while(count<enemyBullets.size())
+                {
+                    if(enemyBullets.get(count).getY()>playingfield)
+                    {
+                        enemyBullets.remove(count);
+                    }
+                    else
+                    {
+                        if (enemyBullets.get(count).getX()==playership.getX() && enemyBullets.get(count).getY()==playership.getY())
+                        {
+
+                            playership.setHealth(playership.getHealth()-1);
+                            enemyBullets.remove(count);
+                            break;
+                        }
+                    }
+                    count++;
                 }
 
                 int index=0;
@@ -236,6 +275,13 @@ public class Game extends JPanel implements Runnable {
                 for(int i=0;i<playerBullets.size();i++)
                 {
                     playerBullets.get(i).visualize();
+                }
+            }
+            if (enemyBullets.size()!=0)
+            {
+                for(int i=0;i<enemyBullets.size();i++)
+                {
+                    enemyBullets.get(i).visualize();
                 }
             }
 
