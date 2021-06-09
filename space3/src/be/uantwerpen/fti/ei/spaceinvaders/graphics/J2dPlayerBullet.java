@@ -11,6 +11,11 @@ import java.io.IOException;
 public class J2dPlayerBullet extends PlayerBullet {
     private Graphics g;
     private BufferedImage playerBullet;
+
+    /**
+     * This constructor reads in the imgage and resizes it to the right size
+     * @param g
+     */
     J2dPlayerBullet(Graphics g){
         this.g=g;
         try{
@@ -24,7 +29,9 @@ public class J2dPlayerBullet extends PlayerBullet {
     }
 
 
-
+    /**
+     * This method visualisez the playerbullet to the screen
+     */
     @Override
     public void visualize() {
         Graphics2D g2d=g.getG2d();

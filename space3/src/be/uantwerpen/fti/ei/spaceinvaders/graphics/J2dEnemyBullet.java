@@ -11,6 +11,10 @@ import java.io.IOException;
 public class J2dEnemyBullet extends EnemyBullet {
     private Graphics g;
     private BufferedImage enemyBullet;
+    /**
+     * Initialises the J2d Bullet. By reading the image file.
+     * @param  g An instantion of the Graphics class
+     * */
     J2dEnemyBullet(Graphics g){
         this.g=g;
         try{
@@ -24,6 +28,9 @@ public class J2dEnemyBullet extends EnemyBullet {
     }
 
 
+    /**
+     * Visualises the enemy bullet on screen
+     */
     @Override
     public void visualize() {
         Graphics2D g2d=g.getG2d();

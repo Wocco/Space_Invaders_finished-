@@ -13,6 +13,11 @@ public class J2dPlayership extends Playership
 {
     private Graphics g;
     private BufferedImage playership;
+
+    /**
+     * THis constructor of the J2d playership loads the images
+     * @param g an instantion of the graphics class needs to be provided
+     */
     J2dPlayership(Graphics g){
         this.g=g;
         try{
@@ -24,7 +29,11 @@ public class J2dPlayership extends Playership
         }
         this.playership=g.resizeImage(this.playership,g.getWidthIcon(),g.getHeighthIcon());
     }
-    
+
+    /**
+     * This method overrides the visualize from AbstractFactory.
+     * Visualize draws the playership to the screen.
+     */
     @Override
     public void visualize() {
         Graphics2D g2d=g.getG2d();

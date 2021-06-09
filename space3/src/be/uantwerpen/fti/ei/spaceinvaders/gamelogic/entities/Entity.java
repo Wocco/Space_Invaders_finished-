@@ -55,7 +55,6 @@ public abstract class Entity {
         this.y = y;
     }
 
-    abstract String getEntity();
 
     abstract public void visualize() ;
 

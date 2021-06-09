@@ -15,6 +15,5 @@ public abstract class AbstractFactory {
     public abstract EnemyBullet newEnemyBullet();
     public abstract PlayerBullet newPlayerBullet();
     public abstract void setText(String text);
-
     public abstract void update();
 }
