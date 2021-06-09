@@ -19,7 +19,7 @@ public class Graphics {
     private BufferedImage g2dimage;     // used for drawing
     private Graphics2D g2d;             // always draw in this one
     public BufferedImage backgroundImg;
-    public BufferedImage alienImg;
+    private final JLabel statusbar;
 
 
 
@@ -60,6 +60,7 @@ public class Graphics {
         this.ScreenWidth = ScreenWidth;
         this.ScreenHeight = ScreenHeight;
         frame = new JFrame();
+        statusbar = new JLabel();
         panel = new JPanel(true) {
             @Override
             public void paintComponent(java.awt.Graphics g) {
@@ -75,6 +76,9 @@ public class Graphics {
         frame.setResizable(true);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+        statusbar.setText(" S T A R T");
+        frame.add(statusbar, BorderLayout.NORTH);
+
     }
 
     public void render() {
@@ -156,5 +160,13 @@ public class Graphics {
     public void setScreenHeight(int screenHeight) {
         ScreenHeight = screenHeight;
     }
+
+    public JLabel getStatusbar() {
+        return statusbar;
+    }
+
+    public void setStatusbar(String text){statusbar.setText(text);}
+
+
 
 }

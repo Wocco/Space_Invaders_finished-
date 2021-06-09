@@ -2,52 +2,61 @@ package be.uantwerpen.fti.ei.spaceinvaders.gamelogic;
 
 import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.EnemyBullet;
 import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.EnemyShip;
+import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.PlayerBullet;
 import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.Playership;
 import be.uantwerpen.fti.ei.spaceinvaders.graphics.Graphics;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Game extends JPanel implements Runnable {
     AbstractFactory factory;
 
     private int playingfield=16;
+    private int rows=3;
+    private int columns=8;
+    private int moveForward;
     boolean running;
     private int slowcount=0;
+    private boolean gameover=false;
+    private boolean gamewon=false;
+
+    Random rand = new Random();
 
     private Thread thread;
-    //KeyHandler key;
 
-
-    //Entitys
-    private ArrayList<EnemyShip> wave=new ArrayList<EnemyShip>();
+    private ArrayList<EnemyShip> wave = new ArrayList<EnemyShip>();
     private Playership playership;
-    private EnemyBullet enemyBullet;
+    private ArrayList <EnemyBullet> enemyBullets = new ArrayList<EnemyBullet>();
+    private ArrayList <PlayerBullet> playerBullets = new ArrayList<PlayerBullet>();
 
     //input
     private AbstractInput input;
     public Game(AbstractFactory f){
         this.factory=f;
-
     }
+
     public void init(){
-        running=true;
-        input= factory.createInput();
-        for(int i=0;i<=8;i++)
+
+        running = true;
+        gameover = false;
+        input = factory.createInput();
+        for(int j=0; j<rows;j++)
         {
-            wave.add(factory.newEnemyShip());
-            wave.get(i).setX(i+1);
-            wave.get(i).setY(0);
-            wave.get(i).setDx(1);
-            wave.get(i).setDy(1);
+            for(int i=0;i<columns;i++)
+            {
+                wave.add(factory.newEnemyShip());
+                wave.get(wave.size()-1).setDx(1);
+                wave.get(wave.size()-1).setX(1+i);
+                wave.get(wave.size()-1).setY(j);
+                wave.get(wave.size()-1).setVisible(true);
+            }
         }
         playership= factory.newPlayership();
         playership.setX(8);
         playership.setY(16);
 
-        enemyBullet=factory.newEnemyBullet();
-        enemyBullet.setX(10);
-        enemyBullet.setY(10);
     }
 
     public void addNotify(){
@@ -68,7 +77,7 @@ public class Game extends JPanel implements Runnable {
         double lastUpdateTime=System.nanoTime();
         double lastRenderTime;
 
-        final double TARGET_FPS=30;
+        final double TARGET_FPS=10;
         final double TTBR=1000000000/TARGET_FPS;//total time before render
 
         int frameCount=0;
@@ -85,75 +94,187 @@ public class Game extends JPanel implements Runnable {
             {
                 switch (input.getInput())
                 {
-                    case LEFT:
+                    case L:
                         if(playership.getX()>0)
                         {
                             playership.setX(playership.getX()-1);
                         }
                         //else do nothing
                     break;
-                    case SPACE:
-                        //shoot
+                    case S:
+                        playerBullets.add(factory.newPlayerBullet());
+                        playerBullets.get(playerBullets.size()-1).setX(playership.getX());
+                        playerBullets.get(playerBullets.size()-1).setY(playership.getY()-1);
+                        playerBullets.get(playerBullets.size()-1).setDx(0);
+                        playerBullets.get(playerBullets.size()-1).setDy(-1);
 
                     break;
-                    case RIGHT:
+                    case R:
                         if(playership.getX()<=playingfield)
                         {
                             playership.setX(playership.getX()+1);
                         }
-                        System.out.println("The right key is pressed");
+
                         break;
-                    case ESCAPE:
+                    case ESC:
                         //pause the game
-                        System.out.println("The escape button is pressed");
+                        if(gameover==true)
+                        {
+                            gameover=false;
+                            playerBullets.clear();
+                            playership.setHealth(3);
+                            wave.clear();
+                            playerBullets.clear();
+                            enemyBullets.clear();
+
+
+                            running=true;
+                            for(int j=0; j<rows;j++)
+                            {
+                                for(int i=0;i<columns;i++)
+                                {
+                                    wave.add(factory.newEnemyShip());
+                                    wave.get(wave.size()-1).setDx(1);
+                                    wave.get(wave.size()-1).setX(1+i);
+                                    wave.get(wave.size()-1).setY(j);
+                                    wave.get(wave.size()-1).setVisible(true);
+                                }
+                            }
+                            playership.setX(8);
+                            playership.setY(16);
+                        }
+
                         break;
                 }
-
-
 
             }
 
             while((now-lastUpdateTime)>TBU&&(updateCount<MUBR)){
-                //update();
-
-                if(slowcount==10)
+                if(playership.getHealth()<=0)
                 {
-                    if(wave.get(wave.size()-1).getX()>playingfield)//if the outer right wall is hit
-                        {
-                            System.out.println("/if the outer right wall is hit");
-                            for (int i = 0;i<wave.size();i++)
-                            {
-                                wave.get(i).setDx(-1);
-                                wave.get(i).setY(wave.get(i).getY()+1);
-                            }
-                        }
-                    if(wave.get(0).getX()==0)
-                    {
-                        System.out.println("/if the outer left wall is hit");
-                        for (int i = 0;i<wave.size();i++)
-                        {
-                            wave.get(i).setDx(1);
-                            wave.get(i).setY(wave.get(i).getY()+1);
-
-                        }
-                    }
-
-                    for(int i=0;i< wave.size();i++)
-                    {
-                        //if(wave.get(i).getDx()==1)
-                        wave.get(i).setX(wave.get(i).getX()+wave.get(i).getDx());
-                    }
-
-                    slowcount=0;
+                    gameover=true;
                 }
                 else
                 {
-                    slowcount=slowcount+1;
+                    int numberOfAliveEnemys=0;
+                        for (int i = 0; i < wave.size(); i++)
+                        {
+                            if (wave.get(i).isVisible() == true)
+                            {
+                                numberOfAliveEnemys = numberOfAliveEnemys+1;
+                                if(wave.get(i).getY()==16)
+                                {
+                                    gameover=true;
+                                    gamewon=false;
+                                }
+
+                            }
+                        }
+                        if (numberOfAliveEnemys == 0)
+                        {
+                            gamewon=true;
+                            gameover=true;
+                        }
+
+                }
+
+                if(gameover!=true) {
+                    if (slowcount == 10) {
+                        //enemys shooting back
+                        int rand_int1 = rand.nextInt(wave.size());
+                        if (wave.get(rand_int1).isVisible() && rand_int1 % 2 == 0) {
+                            enemyBullets.add(factory.newEnemyBullet());
+                            enemyBullets.get(enemyBullets.size() - 1).setY(wave.get(rand_int1).getY() + 1);
+                            enemyBullets.get(enemyBullets.size() - 1).setX(wave.get(rand_int1).getX());
+                        }
+
+
+                        for (int i = 0; i < enemyBullets.size(); i++) {
+                            enemyBullets.get(i).setY(enemyBullets.get(i).getY() + 1);
+                        }
+
+
+                        if ((wave.get(wave.size() - 1).getX() > playingfield) && moveForward != -2)//if the outer right wall is hit
+                        {
+                            System.out.println("if the outer right wall is hit");
+                            for (int i = 0; i < wave.size(); i++) {
+                                wave.get(i).setDx(0);
+                                moveForward = -1;
+                                wave.get(i).setY(wave.get(i).getY() + 1);
+                            }
+                        }
+
+                        if ((wave.get(0).getX() == 0) && moveForward != 2) {
+                            System.out.println("/if the outer left wall is hit");
+                            for (int i = 0; i < wave.size(); i++) {
+                                wave.get(i).setDx(0);
+                                wave.get(i).setY(wave.get(i).getY() + 1);
+                                moveForward = 1;
+
+                            }
+                        }
+                        for (int i = 0; i < wave.size(); i++) {
+                            //if(wave.get(i).getDx()==1)
+                            wave.get(i).setX(wave.get(i).getX() + wave.get(i).getDx());
+                            if (moveForward == -1) {
+
+                                wave.get(i).setDx(-1);
+
+                            }
+                            if (moveForward == 1) {
+                                wave.get(i).setDx(1);
+
+                            }
+                        }
+                        if (moveForward == -1) {
+                            moveForward = -2;
+                        }
+                        if (moveForward == 1) {
+                            moveForward = 2;
+                        }
+                        slowcount = 0;
+                    } else {
+                        slowcount = slowcount + 1;
+                    }
+
+                    int count = 0;
+                    while (count < enemyBullets.size()) {
+                        if (enemyBullets.get(count).getY() > playingfield) {
+                            enemyBullets.remove(count);
+                        } else {
+                            if (enemyBullets.get(count).getX() == playership.getX() && enemyBullets.get(count).getY() == playership.getY()) {
+
+                                playership.setHealth(playership.getHealth() - 1);
+                                enemyBullets.remove(count);
+                                break;
+                            }
+                        }
+                        count++;
+                    }
+
+                    int index = 0;
+                    while (index < playerBullets.size()) {
+                        if (playerBullets.get(index).getY() < 0) {
+                            playerBullets.remove(index);
+                        } else {
+                            for (int i = 0; i < wave.size(); i++) {
+                                if (playerBullets.get(index).getX() == wave.get(i).getX() && playerBullets.get(index).getY() == wave.get(i).getY() && wave.get(i).isVisible() == true) {
+                                    wave.get(i).setVisible(false);
+                                    playerBullets.remove(index);
+                                    break;
+                                }
+                            }
+                        }
+                        index++;
+                    }
+
+
+                    for (int i = 0; i < playerBullets.size(); i++) {
+                        playerBullets.get(i).setY(playerBullets.get(i).getY() - 1);
+                    }
                 }
 
 
-
-                //input(key);
                 lastUpdateTime+=TBU;
                 updateCount++;
             }
@@ -161,20 +282,41 @@ public class Game extends JPanel implements Runnable {
                 lastUpdateTime=now-TBU;
             }
 
-
-
-
-            //draw();
             lastRenderTime=now;
             frameCount++;
 
-            for(int i=0;i<wave.size();i++)
-            {
-                wave.get(i).visualize();
-            }
-            playership.visualize();
-            enemyBullet.visualize();
+            if(gameover!=true) {
+                //visualize the enemy players
+                for (int i = 0; i < wave.size(); i++) {
+                    if (wave.get(i).isVisible() == true) {
+                        wave.get(i).visualize();
+                    }
+                }
+                if (playerBullets.size() != 0) {
+                    for (int i = 0; i < playerBullets.size(); i++) {
+                        playerBullets.get(i).visualize();
+                    }
+                }
+                if (enemyBullets.size() != 0) {
+                    for (int i = 0; i < enemyBullets.size(); i++) {
+                        enemyBullets.get(i).visualize();
+                    }
+                }
+                factory.setText("Health:  " + playership.getHealth());
+                playership.visualize();
 
+            }
+            else
+            {
+                if(gamewon==true)
+                {
+                    factory.setText(" Goodgame! Prss escape to restart");
+                }
+                else
+                {
+                    factory.setText("   !!!!GAME OVER!!!! press escape to restart");
+                }
+            }
             factory.update();
 
             int thisSecond=(int) (lastUpdateTime/1000000000);
@@ -195,7 +337,6 @@ public class Game extends JPanel implements Runnable {
                     System.out.println("Error yielding thread");
                 }
                 now=System.nanoTime();
-
             }
         }
     }

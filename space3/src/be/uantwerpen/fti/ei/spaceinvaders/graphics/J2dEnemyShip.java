@@ -11,6 +11,11 @@ import java.io.IOException;
 public class J2dEnemyShip extends EnemyShip {
     private Graphics g;
     private BufferedImage enemyshipimg;
+
+    /**
+     * initialises the J2d enemyship
+     * @param g g An instantion of the Graphics class
+     */
     J2dEnemyShip(Graphics g){
         this.g=g;
         try{
@@ -26,6 +31,9 @@ public class J2dEnemyShip extends EnemyShip {
 
 
 
+    /**
+     * Visualises the enemy ship on screen
+     */
     @Override
     public void visualize() {
         Graphics2D g2d=g.getG2d();
