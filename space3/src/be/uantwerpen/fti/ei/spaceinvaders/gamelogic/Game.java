@@ -6,9 +6,16 @@ import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.PlayerBullet;
 import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.Playership;
 import be.uantwerpen.fti.ei.spaceinvaders.graphics.Graphics;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Random;
+
 
 public class Game extends JPanel implements Runnable {
     AbstractFactory factory;
@@ -35,10 +42,11 @@ public class Game extends JPanel implements Runnable {
     private AbstractInput input;
     public Game(AbstractFactory f){
         this.factory=f;
+        playMusic();
     }
 
-    public void init(){
-
+    public void init()
+    {
         running = true;
         gameover = false;
         input = factory.createInput();
@@ -58,6 +66,33 @@ public class Game extends JPanel implements Runnable {
         playership.setY(16);
 
     }
+
+    public static void playMusic()
+    {
+       try
+       {
+            File musicPath = new File("src/be/uantwerpen/fti/ei/spaceinvaders/resources/bakerstreet.wav");
+            if(musicPath.exists())
+            {
+                AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
+                Clip clip = AudioSystem.getClip();
+                clip.open(audioInput);
+                clip.start();
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+
+            }
+            else
+            {
+                System.out.println("File not found with given path");
+            }
+       }
+       catch (Exception e)
+       {
+            e.printStackTrace();
+       }
+
+    }
+
 
     public void addNotify(){
         super.addNotify();
@@ -120,12 +155,14 @@ public class Game extends JPanel implements Runnable {
                         //pause the game
                         if(gameover==true)
                         {
+                            gamewon=false;
                             gameover=false;
                             playerBullets.clear();
                             playership.setHealth(3);
                             wave.clear();
                             playerBullets.clear();
                             enemyBullets.clear();
+                            moveForward=0;
 
 
                             running=true;
@@ -194,6 +231,7 @@ public class Game extends JPanel implements Runnable {
                         }
 
 
+
                         if ((wave.get(wave.size() - 1).getX() > playingfield) && moveForward != -2)//if the outer right wall is hit
                         {
                             System.out.println("if the outer right wall is hit");
@@ -205,7 +243,7 @@ public class Game extends JPanel implements Runnable {
                         }
 
                         if ((wave.get(0).getX() == 0) && moveForward != 2) {
-                            System.out.println("/if the outer left wall is hit");
+                            System.out.println("if the outer left wall is hit");
                             for (int i = 0; i < wave.size(); i++) {
                                 wave.get(i).setDx(0);
                                 wave.get(i).setY(wave.get(i).getY() + 1);
@@ -310,7 +348,8 @@ public class Game extends JPanel implements Runnable {
             {
                 if(gamewon==true)
                 {
-                    factory.setText(" Goodgame! Prss escape to restart");
+                    factory.setText(" Goodgame! Press escape to restart");
+
                 }
                 else
                 {
