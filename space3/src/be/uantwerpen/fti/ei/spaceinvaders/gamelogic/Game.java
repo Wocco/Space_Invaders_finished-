@@ -1,9 +1,6 @@
 package be.uantwerpen.fti.ei.spaceinvaders.gamelogic;
 
-import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.EnemyBullet;
-import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.EnemyShip;
-import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.PlayerBullet;
-import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.Playership;
+import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.*;
 import be.uantwerpen.fti.ei.spaceinvaders.graphics.Graphics;
 
 import javax.sound.sampled.AudioInputStream;
@@ -37,6 +34,7 @@ public class Game extends JPanel implements Runnable {
     private Playership playership;
     private ArrayList <EnemyBullet> enemyBullets = new ArrayList<EnemyBullet>();
     private ArrayList <PlayerBullet> playerBullets = new ArrayList<PlayerBullet>();
+    private Pbonus playerBonus;
 
     //input
     private AbstractInput input;
@@ -48,6 +46,8 @@ public class Game extends JPanel implements Runnable {
     public void init()
     {
         running = true;
+        playerBonus = factory.newPbonus();
+        playerBonus.setVisible(false);
         gameover = false;
         input = factory.createInput();
         for(int j=0; j<rows;j++)
@@ -92,7 +92,6 @@ public class Game extends JPanel implements Runnable {
        }
 
     }
-
 
     public void addNotify(){
         super.addNotify();
@@ -216,7 +215,8 @@ public class Game extends JPanel implements Runnable {
                 }
 
                 if(gameover!=true) {
-                    if (slowcount == 10) {
+                    if (slowcount == 10)
+                    {
                         //enemys shooting back
                         int rand_int1 = rand.nextInt(wave.size());
                         if (wave.get(rand_int1).isVisible() && rand_int1 % 2 == 0) {
@@ -252,7 +252,6 @@ public class Game extends JPanel implements Runnable {
                             }
                         }
                         for (int i = 0; i < wave.size(); i++) {
-                            //if(wave.get(i).getDx()==1)
                             wave.get(i).setX(wave.get(i).getX() + wave.get(i).getDx());
                             if (moveForward == -1) {
 
@@ -271,23 +270,59 @@ public class Game extends JPanel implements Runnable {
                             moveForward = 2;
                         }
                         slowcount = 0;
-                    } else {
+
+                        int rand_int2 = rand.nextInt(playingfield);
+
+                        if(rand_int2==8 && playerBonus.isVisible()!=true)
+                        {
+                            int rand_int3 = rand.nextInt(playingfield);
+                            playerBonus.setX(rand_int3 );
+                            playerBonus.setY(0);
+                            playerBonus.setDx(0);
+                            playerBonus.setDy(1);
+                            playerBonus.setVisible(true);
+
+                        }
+                        if(playerBonus.isVisible()==true)
+                        {
+                            if(playerBonus.getY()<16)
+                            {
+                                playerBonus.setY(playerBonus.getY() + playerBonus.getDy());
+                            }
+                            else
+                            {
+                                playerBonus.setVisible(false);
+                            }
+                        }
+                    }
+                    else
+                    {
                         slowcount = slowcount + 1;
                     }
 
                     int count = 0;
-                    while (count < enemyBullets.size()) {
-                        if (enemyBullets.get(count).getY() > playingfield) {
+                    while (count < enemyBullets.size())
+                    {
+                        if (enemyBullets.get(count).getY() > playingfield)
+                        {
                             enemyBullets.remove(count);
-                        } else {
-                            if (enemyBullets.get(count).getX() == playership.getX() && enemyBullets.get(count).getY() == playership.getY()) {
-
+                        }
+                        else
+                        {
+                            if (enemyBullets.get(count).getX() == playership.getX() && enemyBullets.get(count).getY() == playership.getY())
+                            {
                                 playership.setHealth(playership.getHealth() - 1);
                                 enemyBullets.remove(count);
                                 break;
                             }
+
                         }
                         count++;
+                    }
+                    if(playerBonus.getY() == playership.getY() && playerBonus.getX() == playership.getX() && playerBonus.isVisible()==true)
+                    {
+                        playership.setHealth(playership.getHealth()+1);
+                        playerBonus.setVisible(false);
                     }
 
                     int index = 0;
@@ -339,6 +374,10 @@ public class Game extends JPanel implements Runnable {
                     for (int i = 0; i < enemyBullets.size(); i++) {
                         enemyBullets.get(i).visualize();
                     }
+                }
+                if(playerBonus.isVisible()==true)
+                {
+                    playerBonus.visualize();
                 }
                 factory.setText("Health:  " + playership.getHealth());
                 playership.visualize();

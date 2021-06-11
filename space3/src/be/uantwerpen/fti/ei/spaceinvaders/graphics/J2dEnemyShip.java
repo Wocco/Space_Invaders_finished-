@@ -16,10 +16,13 @@ public class J2dEnemyShip extends EnemyShip {
      * initialises the J2d enemyship
      * @param g g An instantion of the Graphics class
      */
-    J2dEnemyShip(Graphics g){
+    J2dEnemyShip(Graphics g)
+    {
         this.g=g;
-        try{
-            this.enemyshipimg = ImageIO.read(new File("src/be/uantwerpen/fti/ei/spaceinvaders/resources/alien.png"));}
+        try
+        {
+            this.enemyshipimg = ImageIO.read(new File("src/be/uantwerpen/fti/ei/spaceinvaders/resources/alien.png"));
+        }
 
         catch(IOException e)
         {
@@ -32,7 +35,7 @@ public class J2dEnemyShip extends EnemyShip {
 
 
     /**
-     * Visualises the enemy ship on screen
+     * Visualizes the enemy ship on screen
      */
     @Override
     public void visualize() {
