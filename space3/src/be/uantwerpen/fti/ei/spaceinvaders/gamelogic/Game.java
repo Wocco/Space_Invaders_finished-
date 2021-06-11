@@ -96,9 +96,9 @@ public class Game extends JPanel implements Runnable {
 
     public void addNotify(){
         super.addNotify();
-        if(thread==null)
+        if(thread == null)
         {
-            thread =new Thread(this,"gamethread");
+            thread = new Thread(this,"gamethread");
             thread.start();
         }
     }
