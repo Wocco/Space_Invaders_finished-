@@ -1,15 +1,14 @@
 package be.uantwerpen.fti.ei.spaceinvaders.gamelogic;
 
 import be.uantwerpen.fti.ei.spaceinvaders.gamelogic.entities.*;
-import be.uantwerpen.fti.ei.spaceinvaders.graphics.Graphics;
+
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -17,9 +16,9 @@ import java.util.Random;
 public class Game extends JPanel implements Runnable {
     AbstractFactory factory;
 
-    private int playingfield=16;
-    private int rows=3;
-    private int columns=8;
+    private final int PLAYINGFIELD =16;
+    private final int ROWS =3;
+    private final int COLUMNS =8;
     private int moveForward;
     boolean running;
     private int slowcount=0;
@@ -38,11 +37,20 @@ public class Game extends JPanel implements Runnable {
 
     //input
     private AbstractInput input;
+
+    /**
+     * starts the game by setting the factory that is provided to the game to it's own abstract factory.
+     * @param f Abstract factory
+     */
     public Game(AbstractFactory f){
         this.factory=f;
         playMusic();
     }
 
+    /**
+     * Initialises the game by setting all the parameters to a working starting position
+     * Also creates a horde of enemies to start the game of.
+     */
     public void init()
     {
         running = true;
@@ -50,9 +58,9 @@ public class Game extends JPanel implements Runnable {
         playerBonus.setVisible(false);
         gameover = false;
         input = factory.createInput();
-        for(int j=0; j<rows;j++)
+        for(int j = 0; j< ROWS; j++)
         {
-            for(int i=0;i<columns;i++)
+            for(int i = 0; i< COLUMNS; i++)
             {
                 wave.add(factory.newEnemyShip());
                 wave.get(wave.size()-1).setDx(1);
@@ -67,6 +75,9 @@ public class Game extends JPanel implements Runnable {
 
     }
 
+    /**
+     * Plays baker street once called and keeps looping the song until the game is closed
+     */
     public static void playMusic()
     {
        try
@@ -93,6 +104,9 @@ public class Game extends JPanel implements Runnable {
 
     }
 
+    /**
+     *If there is no thread running a new thread is started named gamethread
+     */
     public void addNotify(){
         super.addNotify();
         if(thread == null)
@@ -101,21 +115,28 @@ public class Game extends JPanel implements Runnable {
             thread.start();
         }
     }
+
+    /**
+     * The game loop. This loop makes the game run smoothly by having a game refresh frequency and a graphics refresh rate.
+     * The game is also implemented in this method. Checking if bullet's hit, moving the enemies and moving the player ship is al done in this method.
+     * This method also makes use of nano.time instead of milliseconds because it's more accurate and reliable.
+     */
     @Override
-    public void run() {
-        final double GAME_HERTZ=4;
-        final double TBU= 2_00_000_000 /GAME_HERTZ;//time before update
+    public void run()
+    {
+        final double GAME_HERTZ = 4; // the game refresh rate
+        final double TBU = 2_00_000_000 /GAME_HERTZ;//time before update
 
-        final int MUBR=1; //most updates before render
+        final int MUBR = 1; //most updates before render
 
-        double lastUpdateTime=System.nanoTime();
+        double lastUpdateTime = System.nanoTime();
         double lastRenderTime;
 
-        final double TARGET_FPS=10;
-        final double TTBR=1000000000/TARGET_FPS;//total time before render
+        final double TARGET_FPS = 10;
+        final double TTBR = 1000000000/TARGET_FPS; //total time before render
 
-        int frameCount=0;
-        int lastSecondTime=(int) (lastUpdateTime/1000000000);
+        int frameCount = 0;
+        int lastSecondTime = (int) (lastUpdateTime/1000000000);
         int oldFrameCount=0;
 
         while(running){
@@ -123,7 +144,7 @@ public class Game extends JPanel implements Runnable {
             double now=System.nanoTime();
             int updateCount=0;
 
-
+            //check for input (if a key is pressed)
             if(input.inputAvailable())
             {
                 switch (input.getInput())
@@ -144,7 +165,7 @@ public class Game extends JPanel implements Runnable {
 
                     break;
                     case R:
-                        if(playership.getX()<=playingfield)
+                        if(playership.getX()<= PLAYINGFIELD)
                         {
                             playership.setX(playership.getX()+1);
                         }
@@ -165,9 +186,9 @@ public class Game extends JPanel implements Runnable {
 
 
                             running=true;
-                            for(int j=0; j<rows;j++)
+                            for(int j = 0; j< ROWS; j++)
                             {
-                                for(int i=0;i<columns;i++)
+                                for(int i = 0; i< COLUMNS; i++)
                                 {
                                     wave.add(factory.newEnemyShip());
                                     wave.get(wave.size()-1).setDx(1);
@@ -185,7 +206,8 @@ public class Game extends JPanel implements Runnable {
 
             }
 
-            while((now-lastUpdateTime)>TBU&&(updateCount<MUBR)){
+            while((now-lastUpdateTime) > TBU&&(updateCount<MUBR))
+            {
                 if(playership.getHealth()<=0)
                 {
                     gameover=true;
@@ -226,13 +248,14 @@ public class Game extends JPanel implements Runnable {
                         }
 
 
-                        for (int i = 0; i < enemyBullets.size(); i++) {
+                        for (int i = 0; i < enemyBullets.size(); i++)
+                        {
                             enemyBullets.get(i).setY(enemyBullets.get(i).getY() + 1);
                         }
 
 
 
-                        if ((wave.get(wave.size() - 1).getX() > playingfield) && moveForward != -2)//if the outer right wall is hit
+                        if ((wave.get(wave.size() - 1).getX() > PLAYINGFIELD) && moveForward != -2)//if the outer right wall is hit
                         {
                             System.out.println("if the outer right wall is hit");
                             for (int i = 0; i < wave.size(); i++) {
@@ -271,11 +294,11 @@ public class Game extends JPanel implements Runnable {
                         }
                         slowcount = 0;
 
-                        int rand_int2 = rand.nextInt(playingfield);
+                        int rand_int2 = rand.nextInt(PLAYINGFIELD);
 
-                        if(rand_int2==8 && playerBonus.isVisible()!=true)
+                        if(rand_int2==8 && playerBonus.isVisible() != true)
                         {
-                            int rand_int3 = rand.nextInt(playingfield);
+                            int rand_int3 = rand.nextInt(PLAYINGFIELD);
                             playerBonus.setX(rand_int3 );
                             playerBonus.setY(0);
                             playerBonus.setDx(0);
@@ -283,7 +306,7 @@ public class Game extends JPanel implements Runnable {
                             playerBonus.setVisible(true);
 
                         }
-                        if(playerBonus.isVisible()==true)
+                        if(playerBonus.isVisible() == true)
                         {
                             if(playerBonus.getY()<16)
                             {
@@ -303,7 +326,7 @@ public class Game extends JPanel implements Runnable {
                     int count = 0;
                     while (count < enemyBullets.size())
                     {
-                        if (enemyBullets.get(count).getY() > playingfield)
+                        if (enemyBullets.get(count).getY() > PLAYINGFIELD)
                         {
                             enemyBullets.remove(count);
                         }
@@ -400,7 +423,7 @@ public class Game extends JPanel implements Runnable {
             int thisSecond=(int) (lastUpdateTime/1000000000);
             if(thisSecond>lastSecondTime){
                 if(frameCount!=oldFrameCount){
-                    System.out.println("NEW SECOND "+thisSecond+" "+frameCount);
+
                     oldFrameCount=frameCount;
                 }
                 frameCount=0;

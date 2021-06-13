@@ -75,11 +75,15 @@ public class J2dFactory extends AbstractFactory {
 
     /**
      * create a new Enemybullet instantion
-     * @return JédEnemyBullet is an extension of Enemybullet
+     * @return J2dEnemyBullet is an extension of Enemybullet
      */
     @Override
     public EnemyBullet newEnemyBullet() { return new J2dEnemyBullet(this.g);}
 
+    /**
+     * Create a new Player bonus instantion
+     * @return
+     */
     @Override
     public Pbonus newPbonus() {
         return new J2dPbonus(this.g);
